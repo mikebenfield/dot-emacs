@@ -334,3 +334,4 @@
 (global-set-key [f4] 'my-rust-use-format)
 
 (require 'my-outline)
+(require 'my-rust)

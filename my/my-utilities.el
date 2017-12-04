@@ -12,3 +12,20 @@
       (insert s2)
       (goto-char (+ beg2 (- diff1) diff2))
       (insert s1))))
+
+(defun my-leading-space-count ()
+  "How many space characters does the line begin with?"
+  (save-excursion
+    (beginning-of-line)
+    (looking-at " *")
+    (- (match-end 0) (match-beginning 0))))
+
+(defun my-next-line-empty-p ()
+  "Does the next line contain nothing but spaces?"
+  (save-excursion
+    (end-of-line)
+    (and (not (eobp))
+	 (progn
+	   (forward-line)
+	   (beginning-of-line)
+	   (looking-at " *$")))))
