@@ -1,4 +1,7 @@
 
+(setq mouse-wheel-progressive-speed nil)
+(setq mouse-wheel-scroll-amount '(1 ((shift . 1))))
+
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
@@ -13,6 +16,7 @@
 
 (winner-mode t)
 
+(setq visible-bell t)
 ;; (use-package auctex
 ;;  :ensure t
 ;;  :pin gnu
@@ -27,6 +31,26 @@
 ;;  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
 ;;  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 ;;  (setq reftex-plug-into-AUCTeX t))
+
+(use-package cuda-mode
+  :ensure t
+  :pin melpa)
+
+(use-package origami
+  :ensure t
+  :pin melpa)
+
+(use-package exec-path-from-shell
+  :ensure t
+  :pin melpa
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)
+    (setq-default eshell-path-env (getenv "PATH"))))
+
+(use-package nasm-mode
+  :ensure t
+  :pin melpa)
 
 (use-package d-mode
   :ensure t
@@ -131,7 +155,7 @@
  '(org-agenda-files (quote ("~/GoogleDrive/DailyPlan/2017-02-18.org")))
  '(package-selected-packages
    (quote
-    (d-mode rust-mode julia-mode nim-mode cython-mode auctex counsel-projectile projectile counsel moe-theme molokai-theme use-package ## ensime elpy jedi rainbow-delimiters material-theme magit zenburn-theme organic-green-theme haskell-mode markdown-mode silkworm-theme evil-commentary evil)))
+    (cuda-mode origami exec-path-from-shell nasm-mode d-mode rust-mode julia-mode nim-mode cython-mode auctex counsel-projectile projectile counsel moe-theme molokai-theme use-package ## ensime elpy jedi rainbow-delimiters material-theme magit zenburn-theme organic-green-theme haskell-mode markdown-mode silkworm-theme evil-commentary evil)))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -147,8 +171,16 @@
 (define-key evil-normal-state-map " " 'evil-window-map)
 (define-key evil-motion-state-map " " 'evil-window-map)
 (define-key evil-normal-state-map (kbd "M-f") 'toggle-frame-fullscreen)
+(define-key evil-normal-state-map (kbd "RET") nil)
+(define-key evil-motion-state-map (kbd "RET") nil)
+
+;; (define-key evil-normal-state-map (kbd "<tab>") 'origami-toggle-node)
+;; (define-key evil-normal-state-map (kbd "S-<tab>")
+;;   'origami-recursively-toggle-node)
 
 (setq backup-directory-alist `(("." . "~/.emacs.d/saves")))
+(setq auto-save-file-name-transforms
+      `((".*" "~/.emacs.d/saves" t)))
 
 ; gc, as in vim-commentary
 (evil-commentary-mode)
@@ -187,6 +219,8 @@
 
 ;; my functions
 
+(add-to-list 'load-path "/Users/mike/.emacs.d/my/")
+
 (format-time-string "%Y-%m-%d")
 
 (defvar my-daily-plan-directory "~/GoogleDrive/DailyPlan/")
@@ -202,7 +236,6 @@
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
 
-
 (defun my-insert-time ()
   (interactive)
   (insert (format-time-string "%H:%M")))
@@ -216,3 +249,88 @@
 (setq eshell-prompt-function
     (lambda ()
     (concat (eshell/pwd) "\n $ ")))
+
+;; gdb
+(setq gdb-many-windows t)
+
+;; Rus use formating
+
+(defun my-rust-sort-use-line ()
+  ;; the buffer has been narrowed to a 'use' line
+  (save-excursion
+    (save-restriction
+      (let* ((beg (search-forward "{" nil t))
+	     (self-beg (search-forward "self" nil t))
+	     (real-beg (if (and beg self-beg)
+			   self-beg
+			 beg))
+	    (end (search-forward "}" nil t)))
+	(if (and real-beg end (< real-beg end))
+	    (sort-regexp-fields nil "[a-zA-Z0-9_]+" "[a-zA-Z0-0_]+" real-beg end))))))
+
+(defun my-rust-sort-use-lines ()
+  (save-excursion
+    (save-restriction
+      (goto-char (point-min))
+      (let ((beg t)
+	    (end t))
+	(while beg
+	  (setq beg (re-search-forward "^\\(use\\|pub use\\)" nil t))
+	  (setq end (search-forward ";" nil t))
+	  (when (and beg end)
+	    (save-excursion
+	      (save-restriction
+		(narrow-to-region beg end)
+		(goto-char (point-min))
+		(my-rust-sort-use-line)))))))))
+
+(defconst my-rust-use-line-regexp "^[^;.\n]*?;")
+;; (defconst my-rust-use-line-regexp "^\\(use\\|pub use\\)\\(.+\n\\)*;")
+
+(defun put-at-beginning (x)
+  (save-excursion
+    (goto-char (point-min))
+    (insert "\n")
+    (insert (number-to-string x))
+    ))
+
+;; returns beginning of block if narrowed; otherwise nil. leaves point at beginning of
+;; block
+(defun my-rust-narrow-to-use-block ()
+  (let ((beg (re-search-forward "^\\(use\\|pub use\\)" nil t))
+	(end (re-search-forward "^[[:space:]]*$" nil t)))
+    (when (and beg end)
+      (goto-char beg)
+      (beginning-of-line)
+      (narrow-to-region (point) end)
+      beg)))
+
+(defun my-rust-nextrecfn ()
+  (if (not (re-search-forward "^\\(use\\|pub use\\)" nil t))
+    (goto-char (point-max))
+    (beginning-of-line)))
+
+(defun my-rust-endrecfn ()
+  (search-forward ";" nil t))
+
+(defun my-rust-sort-use-line-chunks ()
+  (save-excursion
+    (save-restriction
+      (let ((cont (point-min)))
+	(while cont
+	  (goto-char cont)
+	  (save-restriction
+	    (setq cont (my-rust-narrow-to-use-block))
+	    (when cont
+	      (goto-char (point-min))
+	      (sort-subr nil 'my-rust-nextrecfn 'my-rust-endrecfn)
+	      (setq cont (point-max)))))))))
+
+(defun my-rust-use-format ()
+  (interactive)
+  (my-rust-sort-use-lines)
+  (my-rust-sort-use-line-chunks))
+
+(global-set-key [f4] 'my-rust-use-format)
+
+(require 'my-outline)
