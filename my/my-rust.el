@@ -10,7 +10,7 @@
 	(lambda ()
 	  (save-excursion
 	    (beginning-of-line)
-	    (or (looking-at " *//")
+	    (or (looking-at " *///")
 		(looking-at " *#\\[")))))
 
   (setq outline-regexp
@@ -19,7 +19,7 @@
 	 (or
 	  (and (char "A-Z") (* alpha) (* space) "{")
 	  "#["
-	  "//"
+	  "///"
 	  "mod "
 	  "pub mod "
 	  "enum "
