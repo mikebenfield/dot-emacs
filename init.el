@@ -1,15 +1,20 @@
 
 (setq mouse-wheel-progressive-speed nil)
-(setq mouse-wheel-scroll-amount '(1 ((shift . 1))))
+; (setq mouse-wheel-scroll-amount '(1 ((shift . 1))))
 
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
 (package-initialize)
 
 (eval-when-compile
   (require 'use-package))
+
+(use-package ivy
+  :ensure
+  :pin melpa)
 
 (require 'evil)
 (evil-mode 1)
@@ -17,24 +22,23 @@
 (winner-mode t)
 
 (setq visible-bell t)
-;; (use-package auctex
-;;  :ensure t
-;;  :pin gnu
-;;  :config
-;;  (setq TeX-auto-save t)
-;;  (setq TeX-parse-self t)
-;;  (setq TeX-PDF-mode t)
-;;  (setq-default TeX-master nil)
-;;  ;; (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-;;  (add-hook 'LaTeX-mode-hook 'auto-fill-mode)
-;;  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-;;  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
-;;  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-;;  (setq reftex-plug-into-AUCTeX t))
 
-(use-package cuda-mode
-  :ensure t
-  :pin melpa)
+; (use-package auctex
+;  :ensure t
+;  :pin gnu
+;  :config
+;  (setq TeX-auto-save t)
+;  (setq TeX-parse-self t)
+;  (setq TeX-PDF-mode t)
+;  (setq-default TeX-master nil)
+;  ;; (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+;  (add-hook 'LaTeX-mode-hook 'auto-fill-mode)
+;  (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+;  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+;  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+;  (setq reftex-plug-into-AUCTeX t))
+
+(use-package cuda-mode :ensure t :pin melpa)
 
 (use-package origami
   :ensure t
@@ -64,14 +68,6 @@
   :ensure t
   :pin melpa)
 
-(use-package ivy
-  :ensure t
-  :pin melpa-stable
-  :config
-  (ivy-mode t)
-  (global-set-key "\C-s" 'swiper)
-  (global-set-key (kbd "C-c C-r") 'ivy-resume))
-
 (use-package counsel
  :ensure t
  :pin melpa-stable
@@ -93,7 +89,7 @@
 (use-package evil
   :ensure t
   :pin melpa-stable)
-  
+
 ;; ensime (scala)
 (use-package ensime
   :ensure t
@@ -146,23 +142,21 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(blink-cursor-mode nil)
  '(custom-safe-themes
    (quote
     ("98cc377af705c0f2133bb6d340bf0becd08944a588804ee655809da5d8140de6" "4e753673a37c71b07e3026be75dc6af3efbac5ce335f3707b7d6a110ecb636a3" "2439e27fb4695fa3f6b6336fa3f053e97f51ee251d583edc1a26e3b392eade55" "b747fb36e99bc7f497248eafd6e32b45613ee086da74d1d92a8da59d37b9a829" default)))
  '(inhibit-startup-screen t)
- '(menu-bar-mode nil)
  '(org-agenda-files (quote ("~/GoogleDrive/DailyPlan/2017-02-18.org")))
  '(package-selected-packages
    (quote
-    (cuda-mode origami exec-path-from-shell nasm-mode d-mode rust-mode julia-mode nim-mode cython-mode auctex counsel-projectile projectile counsel moe-theme molokai-theme use-package ## ensime elpy jedi rainbow-delimiters material-theme magit zenburn-theme organic-green-theme haskell-mode markdown-mode silkworm-theme evil-commentary evil)))
+    (org solarized-theme gandalf-theme eink-theme forest-blue-theme liso-theme cuda-mode origami exec-path-from-shell nasm-mode d-mode rust-mode julia-mode nim-mode cython-mode auctex counsel-projectile projectile counsel moe-theme molokai-theme use-package ## ensime elpy jedi rainbow-delimiters material-theme magit zenburn-theme organic-green-theme haskell-mode markdown-mode silkworm-theme evil-commentary evil)))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Monaco" :foundry "nil" :slant normal :weight normal :height 120 :width normal)))))
+ )
 
 (menu-bar-mode -1)
 (tool-bar-mode -1)
@@ -184,8 +178,10 @@
 
 ; gc, as in vim-commentary
 (evil-commentary-mode)
-(set-cursor-color "#00bfff")
+;; (set-cursor-color "#006fbf")
 (global-hl-line-mode)
+(set-face-background 'hl-line "#F1FA2A")
+(set-face-foreground 'highlight nil)
 (blink-cursor-mode 0)
 
 (setq-default fill-column 80)
@@ -193,12 +189,14 @@
 
 ;;;; appearance
 
-
 (setq org-odd-levels-only t)
 (setq org-hide-leading-stars t)
 (setq org-adapt-indentation nil)
-(require 'moe-theme)
-(moe-light)
+(require 'gandalf-theme)
+;; (require 'eink-theme)
+(setq create-lockfiles nil) ; I don't want these stupid .# files
+;; (require 'moe-theme)
+;; (moe-light)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 ;; (load-theme 'organic-green)
 ;; (load-theme 'silkworm)
@@ -253,7 +251,7 @@
 ;; gdb
 (setq gdb-many-windows t)
 
-;; Rus use formating
+;; Rust use formating
 
 (defun my-rust-sort-use-line ()
   ;; the buffer has been narrowed to a 'use' line
@@ -283,16 +281,6 @@
 		(narrow-to-region beg end)
 		(goto-char (point-min))
 		(my-rust-sort-use-line)))))))))
-
-(defconst my-rust-use-line-regexp "^[^;.\n]*?;")
-;; (defconst my-rust-use-line-regexp "^\\(use\\|pub use\\)\\(.+\n\\)*;")
-
-(defun put-at-beginning (x)
-  (save-excursion
-    (goto-char (point-min))
-    (insert "\n")
-    (insert (number-to-string x))
-    ))
 
 ;; returns beginning of block if narrowed; otherwise nil. leaves point at beginning of
 ;; block
@@ -335,3 +323,5 @@
 
 (require 'my-outline)
 (require 'my-rust)
+(require 'my-keys)
+(require 'my-org)

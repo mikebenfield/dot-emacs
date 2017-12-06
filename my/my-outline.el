@@ -172,6 +172,9 @@ line is a comment")
 (defun my-outline-install ()
   (outline-minor-mode 1)
 
+  (set-display-table-slot standard-display-table
+                        'selective-display (string-to-vector " ◦◦◦◦ "))
+
   (setq outline-level 'my-outline-level)
 
   (evil-local-set-key 'normal (kbd "\\") 'my-outline-cycle)
