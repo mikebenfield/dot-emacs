@@ -17,7 +17,7 @@
 	(rx
 	 (* space)
 	 (or
-	  (and (char "A-Z") (* alpha) (* space) "{")
+	  ;; (and (char "A-Z") (* alpha) (* space) "{")
 	  "#["
 	  "///"
 	  "mod "
@@ -28,6 +28,8 @@
 	  "pub struct"
 	  "fn "
 	  "pub fn "
+	  "unsafe fn"
+	  "unsafe pub fn"
 	  "impl"
 	  "trait "
 	  "pub trait "
@@ -105,3 +107,24 @@
 
 (global-set-key [f4] 'my-rust-use-format)
 
+(defun my-rust-occur ()
+  (interactive)
+  (occur
+   (rx
+    bol
+    (or
+	"fn"
+	"pub fn"
+	"macro_rules"
+	"struct"
+	"pub struct"
+	"enum"
+	"pub enum"
+	"impl"
+	"trait"
+	"pub trait"
+	"unsafe fn"
+	"unsafe pub fn"
+	"mod"
+	"pub mod"
+	))))

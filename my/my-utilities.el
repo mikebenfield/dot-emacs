@@ -29,3 +29,37 @@
 	   (forward-line)
 	   (beginning-of-line)
 	   (looking-at " *$")))))
+
+(defvar my-learn-file "/Users/mike/GoogleDrive/Notes2/learn.org")
+
+(defun my-random-choice (lst total)
+  "Choose a random element from lst.
+lst should be a list of the form ((value1 count1) (value2 count2) ... ).
+The probability of choosing valuei is counti / Sum_j countj.
+"
+  (let ((max (random total))
+	(so-far (cadar lst)))
+    (while (< so-far max)
+      (setq lst (cdr lst))
+      (setq so-far (+ so-far (cadar lst))))
+    (caar lst)))
+
+(defun my-random-learn ()
+  "Choose a random Q in the learn.org file."
+  (interactive)
+  (goto-char 1)
+  (let ((buffer (find-file my-learn-file))
+	(regex "^\*+ SECTION\\(\\(?:_[0-9]*\\)?\\)")
+	(section-headings '())
+	(total 0))
+    (while (re-search-forward regex nil t)
+      (let* ((num-string (seq-drop (match-string 1) 1))
+	     (num (if (equal num-string "")
+	     	      1
+	     	    (string-to-number num-string))))
+	(setq section-headings (cons (list (point) num) section-headings))
+	(setq total (+ num total))))
+    (let ((position (my-random-choice section-headings total)))
+      (goto-char position))))
+
+

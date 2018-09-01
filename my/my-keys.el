@@ -23,7 +23,7 @@
   (- (float-time) (* n 86400)))
 
 (defun my-default-daily-work-file (time)
-  (concat (format-time-string "%a, %Y-%m-%d\n")
+  (concat (format-time-string "%a, %Y-%m-%d\n" time)
 	  "\n"
 	  "* Major tasks to accomplish\n"
 	  "- [ ] First task\n"
@@ -74,3 +74,32 @@
       (find-file filename))))
 
 (define-key 'my-keymap (kbd "d") 'my-open-daily-journal)
+
+(define-key 'my-keymap (kbd "r") 'my-random-learn)
+
+;;;; backspace
+
+(define-prefix-command 'my-backspace-keymap)
+
+(define-key 'my-backspace-keymap (kbd "1") 'avy-goto-char)
+(define-key 'my-backspace-keymap (kbd "2") 'avy-goto-char-2)
+(define-key 'my-backspace-keymap (kbd "3") 'avy-goto-word-1)
+(define-key 'my-backspace-keymap (kbd "4") 'avy-goto-line)
+(define-key 'my-backspace-keymap (kbd "5") 'avy-copy-line)
+(define-key 'my-backspace-keymap (kbd "6") 'avy-copy-region)
+
+(define-key 'my-backspace-keymap (kbd "c") 'compile)
+
+;;;; install my keymaps
+
+(define-key evil-window-map [backspace] 'my-backspace-keymap)
+(define-key evil-normal-state-map [backspace] 'my-backspace-keymap)
+
+(define-key magit-status-mode-map [backspace] 'my-backspace-keymap)
+(define-key magit-status-mode-map " " 'my-keymap)
+
+(define-key help-mode-map [backspace] 'my-backspace-keymap)
+(define-key help-mode-map " " 'my-keymap)
+
+(define-key compilation-mode-map [backspace] 'my-backspace-keymap)
+(define-key compilation-mode-map " " 'my-keymap)

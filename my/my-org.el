@@ -2,6 +2,8 @@
 (provide 'my-org)
 
 (defun my-org-hook ()
+  ;; for some bizarre reason my org mode doesn't have this binding...
+  ;; and this hook isn't helping. ???
   (setq paragraph-start "\\|[    ]*$"
         paragraph-separate "[     ]*$"))
 
