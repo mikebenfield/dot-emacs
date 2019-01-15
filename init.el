@@ -4,6 +4,7 @@
 ;; (setq mouse-wheel-scroll-amount '(1 ((shift . 1))))
 
 (require 'package)
+(setq package-enable-at-startup nil)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/"))
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/"))
@@ -30,6 +31,13 @@
   :config
   (setq evil-collection-setup-minibuffer t)
   (evil-collection-init))
+
+; gc, as in vim-commentary
+(use-package evil-commentary
+  :ensure t
+  :after vi
+  :config
+  (evil-commentary-mode))
 
 (use-package ivy
   :ensure t
@@ -99,7 +107,7 @@
   :ensure t
   :pin melpa
   :config
-  (setq projectile-use-git-grep t)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (projectile-mode))
 
 (use-package counsel-projectile
@@ -204,9 +212,6 @@
 (setq backup-directory-alist `(("." . "~/.emacs.d/saves")))
 (setq auto-save-file-name-transforms
       `((".*" "~/.emacs.d/saves" t)))
-
-; gc, as in vim-commentary
-(evil-commentary-mode)
 
 (global-hl-line-mode)
 (blink-cursor-mode 0)
