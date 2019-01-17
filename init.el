@@ -22,6 +22,7 @@
   :ensure t
   :init
   (setq evil-want-integration nil)
+  (setq evil-want-keybinding nil)
   :config
   (evil-mode 1))
 
@@ -35,13 +36,13 @@
 ; gc, as in vim-commentary
 (use-package evil-commentary
   :ensure t
-  :after vi
+  :after evil
   :config
   (evil-commentary-mode))
 
 (use-package ivy
   :ensure t
-  :pin melpa-stable
+  :pin melpa
   :config
   (ivy-mode t)
   (global-set-key "\C-s" 'swiper)
@@ -89,6 +90,12 @@
   :ensure t
   :pin melpa)
 
+(use-package rainbow-delimiters
+  :ensure
+  :pin melpa
+  :config
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+
 ;; (use-package racer
 ;;   :ensure t
 ;;   :after rust-mode
@@ -96,6 +103,10 @@
 ;;   :init
 ;;   (add-hook 'rust-mode-hook #'racer-mode)
 ;;   (add-hook 'racer-mode-hook #'eldoc-mode))
+
+(use-package ripgrep
+  :ensure t
+  :pin melpa)
 
 (use-package counsel
  :ensure t
@@ -214,6 +225,7 @@
       `((".*" "~/.emacs.d/saves" t)))
 
 (global-hl-line-mode)
+(set-face-background hl-line-face "#FFFF99")
 (blink-cursor-mode 0)
 
 (setq-default fill-column 80)
@@ -228,7 +240,6 @@
 (setq org-adapt-indentation nil)
 
 (setq create-lockfiles nil) ; I don't want these stupid .# files
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 ;; my functions
 
