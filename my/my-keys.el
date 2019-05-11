@@ -88,7 +88,12 @@
 (define-key 'my-backspace-keymap (kbd "5") 'avy-copy-line)
 (define-key 'my-backspace-keymap (kbd "6") 'avy-copy-region)
 
-(define-key 'my-backspace-keymap (kbd "c") 'compile)
+(define-key 'my-backspace-keymap (kbd "`") 'avy-goto-line)
+(define-key 'my-backspace-keymap (kbd "TAB") 'avy-goto-word-1)
+(define-key 'my-backspace-keymap [backspace] 'avy-copy-region)
+(define-key 'my-backspace-keymap (kbd "\\") 'avy-copy-line)
+
+(define-key 'my-backspace-keymap (kbd " j") 'compile)
 
 ;;;; install my keymaps
 
@@ -96,10 +101,18 @@
 (define-key evil-normal-state-map [backspace] 'my-backspace-keymap)
 
 (define-key magit-status-mode-map [backspace] 'my-backspace-keymap)
-(define-key magit-status-mode-map " " 'my-keymap)
+(define-key magit-mode-map " " 'evil-window-map)
 
 (define-key help-mode-map [backspace] 'my-backspace-keymap)
-(define-key help-mode-map " " 'my-keymap)
+(add-hook 'help-mode-hook
+          (lambda ()
+            (evil-local-set-key 'normal " " evil-window-map)
+            (evil-local-set-key 'normal [backspace] 'my-backspace-keymap)))
 
 (define-key compilation-mode-map [backspace] 'my-backspace-keymap)
 (define-key compilation-mode-map " " 'my-keymap)
+
+(add-hook 'magit-mode-hook
+          (lambda ()
+            (evil-local-set-key 'normal " " evil-window-map)
+            (evil-local-set-key 'normal [backspace] 'my-backspace-keymap)))

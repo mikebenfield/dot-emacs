@@ -13,15 +13,10 @@
 (eval-when-compile
   (require 'use-package))
 
-;; (load "/opt/local/libexec/llvm-6.0/libexec/clang-format/clang-format.el")
-;(define-key c-mode-map (kbd "C-c C-f") 'clang-format-buffer)
-;(define-key cuda-mode-map (kbd "C-c C-f") 'clang-format-buffer)
-;(define-key c++-mode-map (kbd "C-c C-f") 'clang-format-buffer)
-
 (use-package evil
   :ensure t
   :init
-  (setq evil-want-integration nil)
+  (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   :config
   (evil-mode 1))
@@ -78,13 +73,13 @@
   :ensure t
   :pin melpa)
 
-(use-package d-mode
-  :ensure t
-  :pin melpa)
+;; (use-package d-mode
+;;   :ensure t
+;;   :pin melpa)
 
-(use-package julia-mode
-  :ensure t
-  :pin melpa)
+;; (use-package julia-mode
+;;   :ensure t
+;;   :pin melpa)
 
 (use-package rust-mode
   :ensure t
@@ -180,7 +175,7 @@
   :init (progn (load-theme 'ample t t)
                (load-theme 'ample-flat t t)
                (load-theme 'ample-light t t)
-               (enable-theme 'ample-light))
+               (enable-theme 'ample))
   :defer t
   :ensure t)
 
@@ -207,6 +202,8 @@
   ;; focus-losing behavior when changing desktops
   (menu-bar-mode -1))
 
+(setq-default require-final-newline 'visit-save)
+
 (tool-bar-mode -1)
 (setq-default indicate-empty-lines t)
 
@@ -225,7 +222,7 @@
       `((".*" "~/.emacs.d/saves" t)))
 
 (global-hl-line-mode)
-(set-face-background hl-line-face "#FFFF99")
+(set-face-background hl-line-face "#444466")
 (blink-cursor-mode 0)
 
 (setq-default fill-column 80)
@@ -235,9 +232,20 @@
 (set-face-font 'default "-*-Inconsolata-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1")
 
 (setq sentence-end-double-space nil)
+
 (setq org-odd-levels-only t)
 (setq org-hide-leading-stars t)
 (setq org-adapt-indentation nil)
+(setq org-todo-keyword-faces
+      '(("TODO" . org-todo)
+        ("DONE" . "orange")
+        ("DELAYED" . "blue")
+        ("CANCELED" . "blue")))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (evil-local-set-key 'normal "\C-t" 'org-todo)
+            (evil-local-set-key 'insert "\C-t" 'org-todo)))
 
 (setq create-lockfiles nil) ; I don't want these stupid .# files
 
@@ -295,3 +303,15 @@
   (let (f (selected-frame))
     (make-frame)
     (delete-frame f)))
+
+(c-set-offset 'innamespace 0)
+
+;; C++
+(load "/opt/local/libexec/llvm-8.0/share/clang/clang-format.el")
+(add-hook
+     'c++-mode-hook
+      (lambda ()
+        (local-set-key (kbd "C-c f") 'clang-format-buffer)
+        (local-set-key (kbd "C-c C-f") 'clang-format-buffer)))
+
+(setq-default indent-tabs-mode nil)
