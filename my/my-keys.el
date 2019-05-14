@@ -46,6 +46,18 @@
 	  "\n"
 	  "* Log\n\n"))
 
+(defun my-visit-journal ()
+  (interactive)
+  (find-file (concat (getenv "HOME") "/Daily/journal.org")))
+
+(define-key my-keymap (kbd "j") 'my-visit-journal)
+
+(defun my-visit-todo ()
+  (interactive)
+  (find-file (concat (getenv "HOME") "/Daily/todo.org")))
+
+(define-key my-keymap (kbd "t") 'my-visit-todo)
+
 (defun my-open-daily-work (n)
   (interactive "P")
   (let* ((n* (if (numberp n) n 0))
@@ -73,10 +85,11 @@
 	(user-error "No journal file for that date")
       (find-file filename))))
 
-(define-key 'my-keymap (kbd "d") 'my-open-daily-journal)
+;; (define-key 'my-keymap (kbd "d") 'my-open-daily-journal)
 
 (define-key 'my-keymap (kbd "r") 'my-random-learn)
 
+(define-key 'my-keymap (kbd "g") 'magit-status)
 ;;;; backspace
 
 (define-prefix-command 'my-backspace-keymap)
