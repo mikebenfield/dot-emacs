@@ -229,7 +229,7 @@
 
 ;;;; appearance
 
-(set-face-font 'default "-*-Inconsolata-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1")
+(set-face-font 'default "-*-Inconsolata-normal-normal-normal-*-17-*-*-*-m-0-iso10646-1")
 
 (setq sentence-end-double-space nil)
 
